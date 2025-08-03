@@ -23,7 +23,6 @@ const TIER_ORDER: UserTier[] = ['free', 'silver', 'gold', 'platinum']
 
 export default function EventsPage() {
   const { user, isLoaded } = useUser()
-  const { signOut } = useClerk()
   const router = useRouter()
   const [eventsData, setEventsData] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
@@ -125,12 +124,6 @@ export default function EventsPage() {
                 {userTier.charAt(0).toUpperCase() + userTier.slice(1)}
               </span>
               <TierUpgradeButton currentTier={userTier} onUpgrade={handleTierUpgrade} />
-              <button
-                onClick={() => signOut()}
-                className="ml-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors duration-200 text-sm font-medium"
-              >
-                Log out
-              </button>
             </div>
           </div>
         </div>

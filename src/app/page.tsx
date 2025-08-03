@@ -1,59 +1,14 @@
 'use client'
 
 import { useUser, SignInButton, SignUpButton, useClerk } from '@clerk/nextjs'
+import { useState } from 'react'
 import Link from 'next/link'
 
 export default function HomePage() {
   const { user, isLoaded } = useUser()
-  const { signOut } = useClerk()
-
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">Tier Event Showcase</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              {isLoaded && user ? (
-                <>
-                  <span className="text-gray-700">
-                    Welcome, {user.firstName || user.emailAddresses[0]?.emailAddress}!
-                  </span>
-                  <Link
-                    href="/events"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
-                  >
-                    View Events
-                  </Link>
-                  <button
-                    onClick={() => signOut()}
-                    className="ml-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors duration-200 text-sm font-medium"
-                  >
-                    Log out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <SignInButton mode="modal">
-                    <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                      Sign In
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
-                      Sign Up
-                    </button>
-                  </SignUpButton>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -132,8 +87,8 @@ export default function HomePage() {
             ].map(({ tier, color, description }) => (
               <div key={tier} className="text-center p-6 rounded-lg border border-gray-200">
                 <div className={`text-2xl font-bold mb-2 ${color === 'gray' ? 'text-gray-700' :
-                    color === 'yellow' ? 'text-yellow-600' :
-                      'text-purple-600'
+                  color === 'yellow' ? 'text-yellow-600' :
+                    'text-purple-600'
                   }`}>
                   {tier}
                 </div>

@@ -60,7 +60,7 @@ export default function EventCard({ event, userTier }: EventCardProps) {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
             {/* Event Image */}
             <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
                 {event.image_url ? (
@@ -75,7 +75,7 @@ export default function EventCard({ event, userTier }: EventCardProps) {
             </div>
 
             {/* Event Content */}
-            <div className="p-6">
+            <div className="p-6 flex flex-col flex-1">
                 {/* Title and Tier Badge */}
                 <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-semibold text-gray-900 flex-1 mr-3">
@@ -94,11 +94,11 @@ export default function EventCard({ event, userTier }: EventCardProps) {
                 </div>
 
                 {/* Description */}
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 leading-relaxed flex-1">
                     {event.description}
                 </p>
 
-                {/* Action Button */}
+                {/* Action Button always at the bottom */}
                 <div className="mt-6">
                     <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium">
                         View Details
