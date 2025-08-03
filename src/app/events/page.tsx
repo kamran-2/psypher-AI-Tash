@@ -1,6 +1,6 @@
 'use client'
 
-import { useUser, useClerk } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
 import { UserTier } from '@/lib/db'
 
@@ -29,6 +29,17 @@ export default function EventsPage() {
   const [error, setError] = useState<string | null>(null)
   const [userTier, setUserTier] = useState<UserTier>('free')
   const [selectedTier, setSelectedTier] = useState<UserTier>('free')
+
+  // Only allow toggling up to the user's tier
+  const availableTiers = useMemo(() => {
+    const idx = TIER_ORDER.indexOf(userTier)
+    return TIER_ORDER.slice(0, idx + 1)
+  }, [userTier])
+
+  // Filter events by selected tier
+  const filteredEvents = useMemo(() => {
+    return eventsData.filter(e => e.tier === selectedTier)
+  }, [eventsData, selectedTier])
 
   useEffect(() => {
     if (isLoaded && !user) {
@@ -94,17 +105,6 @@ export default function EventsPage() {
       </div>
     )
   }
-
-  // Only allow toggling up to the user's tier
-  const availableTiers = useMemo(() => {
-    const idx = TIER_ORDER.indexOf(userTier)
-    return TIER_ORDER.slice(0, idx + 1)
-  }, [userTier])
-
-  // Filter events by selected tier
-  const filteredEvents = useMemo(() => {
-    return eventsData.filter(e => e.tier === selectedTier)
-  }, [eventsData, selectedTier])
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -190,4 +190,4 @@ function getTierBadgeColor(tier: UserTier): string {
     default:
       return 'bg-gray-100 text-gray-800'
   }
-} 
+}

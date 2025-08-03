@@ -35,7 +35,7 @@ export default function LayoutHeader() {
                                 ) : (
                                     <span className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">👤</span>
                                 )}
-                                <span className="hidden sm:inline">Profile</span>
+                                <span className="hidden text-black sm:inline">Profile</span>
                             </button>
                             {/* Profile Drawer */}
                             {profileOpen && (

@@ -1,12 +1,11 @@
 'use client'
 
-import { useUser, SignInButton, SignUpButton, useClerk } from '@clerk/nextjs'
-import { useState } from 'react'
+import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs'
 import Link from 'next/link'
 
 export default function HomePage() {
   const { user, isLoaded } = useUser()
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
 
@@ -18,7 +17,7 @@ export default function HomePage() {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Access exclusive events based on your membership tier. From free community events to premium platinum experiences,
-            there's something for everyone.
+            there&apos;s something for everyone.
           </p>
 
           {isLoaded && user ? (
