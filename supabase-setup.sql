@@ -1,3 +1,14 @@
+-- Create the events table with the specified schema
+CREATE TYPE event_tier AS ENUM ('free', 'silver', 'gold', 'platinum');
+
+CREATE TABLE IF NOT EXISTS public.events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    description TEXT,
+    event_date TIMESTAMP NOT NULL,
+    image_url TEXT,
+    tier event_tier NOT NULL
+);
 -- Create the events table
 CREATE TABLE IF NOT EXISTS events (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

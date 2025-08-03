@@ -1,33 +1,20 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import * as schema from './schema'
+import { createClient } from '@supabase/supabase-js'
 
-// Only create the database connection on the server side
-let db: ReturnType<typeof drizzle> | null = null
+// Create Supabase client
+export const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-function getDatabase() {
-    if (typeof window !== 'undefined') {
-        throw new Error('Database client cannot be used in the browser')
-    }
-
-    if (!db) {
-        // Create postgres connection for Supabase
-        const connectionString = process.env.NEXT_PUBLIC_SUPABASE_URL!
-
-
-        const client = postgres(connectionString, {
-            ssl: 'require',
-        })
-
-        // Create drizzle instance
-        db = drizzle(client, { schema })
-    }
-
-    return db
+// Database types
+export interface Event {
+    id: string
+    title: string
+    description: string
+    event_date: string
+    image_url: string
+    tier: 'free' | 'silver' | 'gold' | 'platinum'
+    created_at?: string
 }
 
-// Export types for convenience
-export type { Event, NewEvent, UserTier } from './schema'
-
-// Export the database getter
-export { getDatabase } 
+export type UserTier = 'free' | 'silver' | 'gold' | 'platinum' 

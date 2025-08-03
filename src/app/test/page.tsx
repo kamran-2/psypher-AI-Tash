@@ -73,7 +73,7 @@ export default function TestPage() {
                                         </span>
                                     </div>
                                     <p className="text-sm text-gray-600 mb-2">
-                                        📅 {new Date(event.eventDate).toLocaleDateString()}
+                                        📅 {new Date(event.event_date).toLocaleDateString()}
                                     </p>
                                     <p className="text-gray-700 text-sm">{event.description}</p>
                                 </div>

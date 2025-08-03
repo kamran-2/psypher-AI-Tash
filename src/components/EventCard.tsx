@@ -63,9 +63,9 @@ export default function EventCard({ event, userTier }: EventCardProps) {
         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
             {/* Event Image */}
             <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                {event.imageUrl ? (
+                {event.image_url ? (
                     <img
-                        src={event.imageUrl}
+                        src={event.image_url}
                         alt={event.title}
                         className="w-full h-full object-cover"
                     />
@@ -89,7 +89,7 @@ export default function EventCard({ event, userTier }: EventCardProps) {
                 {/* Date */}
                 <div className="mb-4">
                     <p className="text-sm text-gray-600">
-                        📅 {formatDate(event.eventDate)}
+                        📅 {formatDate(event.event_date)}
                     </p>
                 </div>
 

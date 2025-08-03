@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server'
-import { getDatabase } from '@/lib/db'
-import { events } from '@/lib/schema'
-import { asc } from 'drizzle-orm'
+import { supabase } from '@/lib/db'
 
 export async function GET() {
     try {
-        const db = getDatabase()
-        const result = await db
-            .select()
-            .from(events)
-            .orderBy(asc(events.eventDate))
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('event_date', { ascending: true })
 
-        return NextResponse.json({ events: result })
+        if (error) {
+            console.error('Supabase error:', error)
+            return NextResponse.json(
+                { error: 'Failed to fetch events' },
+                { status: 500 }
+            )
+        }
+
+        return NextResponse.json({ events: data })
     } catch (error) {
         console.error('API error:', error)
         return NextResponse.json(

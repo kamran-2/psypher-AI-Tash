@@ -1,10 +1,12 @@
 'use client'
 
-import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs'
+import { useUser, SignInButton, SignUpButton, useClerk } from '@clerk/nextjs'
 import Link from 'next/link'
 
 export default function HomePage() {
   const { user, isLoaded } = useUser()
+  const { signOut } = useClerk()
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
@@ -27,6 +29,12 @@ export default function HomePage() {
                   >
                     View Events
                   </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="ml-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors duration-200 text-sm font-medium"
+                  >
+                    Log out
+                  </button>
                 </>
               ) : (
                 <>

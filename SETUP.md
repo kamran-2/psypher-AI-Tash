@@ -1,77 +1,83 @@
 # Quick Setup Guide
 
-## 🚀 Getting Started
+## 🚀 Environment Variables
 
-The application is now running on `http://localhost:3000`! Here's what you need to do to complete the setup:
+Create a `.env.local` file in the root directory:
 
-### 1. Set Up Clerk Authentication
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
 
-1. Go to [Clerk.dev](https://clerk.dev) and create an account
+# Supabase Database
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+```
+
+## 🔐 Clerk Setup
+
+1. Go to [Clerk.dev](https://clerk.dev)
 2. Create a new application
-3. Copy your **Publishable Key** and **Secret Key**
-4. Update your `.env.local` file:
+3. Copy your keys from the dashboard
+4. Add them to `.env.local`
 
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_actual_key_here
-CLERK_SECRET_KEY=sk_test_your_actual_key_here
-```
+## 🗄️ Supabase Setup
 
-### 2. Set Up Supabase Database
+### Step 1: Create Supabase Project
 
-1. Go to [Supabase.com](https://supabase.com) and create an account
+1. Go to [Supabase](https://supabase.com)
 2. Create a new project
-3. Go to **Settings > API** to get your URL and keys
-4. Update your `.env.local` file:
+3. Wait for the project to be ready
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+### Step 2: Get Your Keys
+
+1. Go to Settings > API in your Supabase dashboard
+2. Copy the following:
+   - Project URL
+   - anon/public key
+   - service_role key (keep this secret!)
+3. Add them to your `.env.local` file
+
+### Step 3: Create Database Table
+
+1. Go to the SQL Editor in your Supabase dashboard
+2. Copy and paste the entire contents of `supabase-setup.sql`
+3. Click "Run" to execute the SQL
+
+**OR** use the seed script:
+
+```bash
+npm run db:seed
 ```
 
-### 3. Create the Database Table
+## 🎯 Test Your Setup
 
-1. In your Supabase dashboard, go to **SQL Editor**
-2. Copy and paste the contents of `supabase-setup.sql`
-3. Run the script to create the table and seed data
+1. Start the development server:
 
-### 4. Test the Application
+```bash
+npm run dev
+```
 
-1. Visit `http://localhost:3000` - Landing page
-2. Visit `http://localhost:3000/test` - Database test page
-3. Sign up and visit `http://localhost:3000/events` - Main events page
+2. Visit `http://localhost:3000` (or the port shown)
+
+3. Test the database connection by visiting `/test`
 
 ## 🔧 Troubleshooting
 
-### If you see authentication errors:
+### Database Connection Issues
 
-- Make sure your Clerk keys are correct
-- Restart the development server after updating `.env.local`
+- Verify your Supabase URL and keys are correct
+- Ensure the `events` table exists (run the SQL script)
+- Check that your environment variables are loaded
 
-### If you see database errors:
+### Clerk Issues
 
-- Verify your Supabase URL and keys
-- Make sure you've run the SQL script in Supabase
-- Check the test page at `/test` to verify database connection
+- Verify your Clerk keys are correct
+- Restart the dev server after adding environment variables
 
-### If the middleware still has issues:
+### Common Errors
 
-- The middleware has been updated to use the correct import
-- Try clearing the `.next` folder and restarting: `rm -rf .next && npm run dev`
-
-## 🎯 What's Working Now
-
-✅ **Landing Page** - Beautiful responsive design with authentication buttons  
-✅ **Database Connection** - Supabase client configured  
-✅ **Event Components** - All UI components ready  
-✅ **Tier System** - Complete tier-based filtering logic  
-✅ **Authentication Flow** - Clerk integration ready
-
-## 🚀 Next Steps
-
-1. **Configure your environment variables** (see steps above)
-2. **Run the database setup script**
-3. **Test the application** by visiting the URLs above
-4. **Customize the events** by adding your own data to Supabase
-
-The application is fully functional once you complete the environment setup!
+- `relation "public.events" does not exist` → Run the SQL script in Supabase
+- `Invalid API key` → Check your Supabase keys
+- `Clerk not configured` → Check your Clerk keys

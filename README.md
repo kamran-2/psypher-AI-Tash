@@ -10,13 +10,13 @@ A responsive and elegant web application that allows logged-in users to view a l
 - **Responsive Design**: Mobile-friendly interface with Tailwind CSS
 - **Loading States**: Smooth user experience with loading indicators
 - **Error Handling**: Comprehensive error handling and user feedback
-- **Type Safety**: Full TypeScript support with Drizzle ORM
+- **Type Safety**: Full TypeScript support with Supabase
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 14 (App Router)
 - **Authentication**: Clerk.dev
-- **Database**: Supabase (PostgreSQL) with Drizzle ORM
+- **Database**: Supabase (PostgreSQL)
 - **Styling**: Tailwind CSS
 - **Language**: TypeScript
 
@@ -73,26 +73,19 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 3. Go to Settings > API to get your URL and keys
 4. Add them to your `.env.local` file
 
-### 6. Database Setup with Drizzle
+### 6. Database Setup
 
-#### Option A: Using Drizzle Kit (Recommended)
+#### Option A: Using SQL Script (Recommended)
 
-1. Generate and push the schema:
+1. Run the SQL script in Supabase SQL Editor (use `supabase-setup.sql`)
 
-```bash
-npm run db:generate
-npm run db:push
-```
+#### Option B: Using Seed Script
 
-2. Seed the database with sample data:
+1. Seed the database with sample data:
 
 ```bash
 npm run db:seed
 ```
-
-#### Option B: Manual SQL Setup
-
-1. Run the SQL script in Supabase SQL Editor (use `supabase-setup.sql`)
 
 ### 7. Run the Development Server
 
@@ -102,21 +95,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## 📊 Database Schema (Drizzle ORM)
+## 📊 Database Schema
 
-The application uses Drizzle ORM for type-safe database operations:
+The application uses a single `events` table with the following structure:
 
-```typescript
-// src/lib/schema.ts
-export const events = pgTable("events", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  eventDate: timestamp("event_date", { withTimezone: true }).notNull(),
-  imageUrl: text("image_url"),
-  tier: tierEnum("tier").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
+```sql
+CREATE TABLE events (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    image_url TEXT,
+    tier TEXT NOT NULL CHECK (tier IN ('free', 'silver', 'gold', 'platinum')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
 ## 🎯 User Tiers
@@ -130,7 +122,7 @@ export const events = pgTable("events", {
 
 1. Users sign up/sign in using Clerk.dev
 2. User tier is stored in Clerk metadata
-3. Events are filtered based on user tier using Drizzle ORM
+3. Events are filtered based on user tier using Supabase
 4. Users can upgrade their tier using the upgrade button
 
 ## 🎨 UI Components
@@ -141,21 +133,21 @@ export const events = pgTable("events", {
 
 ## 🗄️ Database Operations
 
-### Using Drizzle ORM
+### Using Supabase Client
 
 ```typescript
 // Fetch events for a specific tier
-const result = await db
-  .select()
-  .from(events)
-  .where(inArray(events.tier, availableTiers))
-  .orderBy(asc(events.eventDate));
+const { data, error } = await supabase
+  .from("events")
+  .select("*")
+  .in("tier", availableTiers)
+  .order("event_date", { ascending: true });
 
 // Insert new event
-await db.insert(events).values({
+const { data, error } = await supabase.from("events").insert({
   title: "New Event",
   description: "Event description",
-  eventDate: new Date(),
+  event_date: new Date().toISOString(),
   tier: "free",
 });
 ```
@@ -190,7 +182,8 @@ src/
 │   ├── test/
 │   │   └── page.tsx          # Database test page
 │   ├── api/events/
-│   │   └── route.ts          # API endpoint
+│   │   ├── route.ts          # API endpoint for all events
+│   │   └── tier/route.ts     # API endpoint for tier-based events
 │   ├── layout.tsx            # Root layout with Clerk provider
 │   └── page.tsx              # Landing page
 ├── components/
@@ -198,8 +191,7 @@ src/
 │   ├── LoadingSpinner.tsx    # Loading indicator
 │   └── TierUpgradeButton.tsx # Tier upgrade functionality
 └── lib/
-    ├── db.ts                 # Drizzle database client
-    ├── schema.ts             # Database schema
+    ├── db.ts                 # Supabase client configuration
     └── seed.ts               # Database seeding
 ```
 
@@ -209,9 +201,6 @@ src/
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Drizzle migrations
-- `npm run db:push` - Push schema to database
-- `npm run db:studio` - Open Drizzle Studio
 - `npm run db:seed` - Seed database with sample data
 
 ## 🐛 Troubleshooting
@@ -231,7 +220,7 @@ src/
 3. **Database Connection Issues**
 
    - Verify your Supabase URL and keys
-   - Ensure the database schema is created using Drizzle or SQL script
+   - Ensure the database table is created using the SQL script
    - Run `npm run db:seed` to populate sample data
 
 4. **TypeScript Errors**
@@ -254,6 +243,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Clerk.dev](https://clerk.dev) for authentication
 - [Supabase](https://supabase.com) for database
-- [Drizzle ORM](https://orm.drizzle.team) for type-safe database operations
 - [Next.js](https://nextjs.org) for the framework
 - [Tailwind CSS](https://tailwindcss.com) for styling

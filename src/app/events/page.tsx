@@ -1,8 +1,18 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
+import { useUser, useClerk } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
-import { Event, UserTier } from '@/lib/db'
+import { UserTier } from '@/lib/db'
+
+// Event type matching the new schema
+type Event = {
+  id: string
+  title: string
+  description: string
+  event_date: string // ISO string from API
+  image_url: string
+  tier: UserTier
+}
 import EventCard from '@/components/EventCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import TierUpgradeButton from '@/components/TierUpgradeButton'
@@ -10,6 +20,7 @@ import { useRouter } from 'next/navigation'
 
 export default function EventsPage() {
   const { user, isLoaded } = useUser()
+  const { signOut } = useClerk()
   const router = useRouter()
   const [eventsData, setEventsData] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,8 +35,9 @@ export default function EventsPage() {
     }
 
     if (isLoaded && user) {
-      // Get user tier from Clerk metadata
-      const tier = (user.publicMetadata.tier as UserTier) || 'free'
+      // Get user tier from Clerk metadata (prefer unsafeMetadata for custom fields)
+      console.log(user)
+      const tier = (user.unsafeMetadata?.tier as UserTier) || 'free'
       setUserTier(tier)
       fetchEvents(tier)
     }
@@ -56,9 +68,8 @@ export default function EventsPage() {
     if (!user) return
 
     try {
-      await user.update({
-        publicMetadata: { tier: newTier }
-      })
+      // Clerk recommends using update({ unsafeMetadata }) for custom fields
+      await user.update({ unsafeMetadata: { tier: newTier } })
       setUserTier(newTier)
       fetchEvents(newTier)
     } catch (err) {
@@ -99,6 +110,12 @@ export default function EventsPage() {
                 {userTier.charAt(0).toUpperCase() + userTier.slice(1)}
               </span>
               <TierUpgradeButton currentTier={userTier} onUpgrade={handleTierUpgrade} />
+              <button
+                onClick={() => signOut()}
+                className="ml-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors duration-200 text-sm font-medium"
+              >
+                Log out
+              </button>
             </div>
           </div>
         </div>
