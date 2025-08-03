@@ -16,7 +16,10 @@ type Event = {
 import EventCard from '@/components/EventCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import TierUpgradeButton from '@/components/TierUpgradeButton'
+import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+
+const TIER_ORDER: UserTier[] = ['free', 'silver', 'gold', 'platinum']
 
 export default function EventsPage() {
   const { user, isLoaded } = useUser()
@@ -26,6 +29,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [userTier, setUserTier] = useState<UserTier>('free')
+  const [selectedTier, setSelectedTier] = useState<UserTier>('free')
 
   useEffect(() => {
     if (isLoaded && !user) {
@@ -36,9 +40,9 @@ export default function EventsPage() {
 
     if (isLoaded && user) {
       // Get user tier from Clerk metadata (prefer unsafeMetadata for custom fields)
-      console.log(user)
       const tier = (user.unsafeMetadata?.tier as UserTier) || 'free'
       setUserTier(tier)
+      setSelectedTier(tier)
       fetchEvents(tier)
     }
   }, [isLoaded, user, router])
@@ -92,6 +96,17 @@ export default function EventsPage() {
     )
   }
 
+  // Only allow toggling up to the user's tier
+  const availableTiers = useMemo(() => {
+    const idx = TIER_ORDER.indexOf(userTier)
+    return TIER_ORDER.slice(0, idx + 1)
+  }, [userTier])
+
+  // Filter events by selected tier
+  const filteredEvents = useMemo(() => {
+    return eventsData.filter(e => e.tier === selectedTier)
+  }, [eventsData, selectedTier])
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -120,6 +135,19 @@ export default function EventsPage() {
           </div>
         </div>
 
+        {/* Tier Toggle Bar */}
+        <div className="mb-8 flex gap-2">
+          {availableTiers.map(tier => (
+            <button
+              key={tier}
+              className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-150 ${selectedTier === tier ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'}`}
+              onClick={() => setSelectedTier(tier)}
+            >
+              {tier.charAt(0).toUpperCase() + tier.slice(1)}
+            </button>
+          ))}
+        </div>
+
         {/* Loading State */}
         {loading && <LoadingSpinner />}
 
@@ -133,14 +161,14 @@ export default function EventsPage() {
         {/* Events Grid */}
         {!loading && !error && (
           <>
-            {eventsData.length === 0 ? (
+            {filteredEvents.length === 0 ? (
               <div className="text-center py-12">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No events available</h3>
-                <p className="text-gray-600">There are no events available for your current tier.</p>
+                <p className="text-gray-600">There are no events available for this tier.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {eventsData.map((event) => (
+                {filteredEvents.map((event) => (
                   <EventCard key={event.id} event={event} userTier={userTier} />
                 ))}
               </div>
