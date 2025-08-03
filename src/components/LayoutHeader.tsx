@@ -15,21 +15,23 @@ export default function LayoutHeader() {
                 <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
                     Tier Event Showcase
                 </Link>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                     {isLoaded && user ? (
                         <>
                             <Link
                                 href="/events"
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 w-full sm:w-auto text-center block sm:inline-block"
+                                style={{ minWidth: '120px' }}
                             >
-                                View Events
+                                <span className="block sm:hidden">Events</span>
+                                <span className="hidden sm:inline">View Events</span>
                             </Link>
                             <button
                                 onClick={() => setProfileOpen(true)}
                                 className="ml-2 flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-sm font-medium focus:outline-none"
                             >
                                 {user.imageUrl ? (
-                                    <img src={user.imageUrl} alt="avatar" className="w-8 h-8 rounded-full object-cover" />
+                                    <img src={user.imageUrl} alt="avatar" className="object-cover" style={{ width: 32, height: 32, borderRadius: '50%' }} />
                                 ) : (
                                     <span className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">👤</span>
                                 )}
@@ -46,7 +48,7 @@ export default function LayoutHeader() {
                                     <aside className="fixed top-0 right-0 h-full w-80 max-w-full bg-white shadow-lg z-50 flex flex-col p-6 animate-slide-in">
                                         <div className="flex flex-col items-center mt-4">
                                             {user.imageUrl ? (
-                                                <img src={user.imageUrl} alt="avatar" className="w-20 h-20 rounded-full object-cover mb-4" />
+                                                <img src={user.imageUrl} alt="avatar" className="object-cover mb-4" style={{ width: 80, height: 80, borderRadius: '50%' }} />
                                             ) : (
                                                 <span className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-4xl text-gray-600 mb-4">👤</span>
                                             )}

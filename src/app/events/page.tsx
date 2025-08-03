@@ -115,15 +115,19 @@ export default function EventsPage() {
             Event Showcase
           </h1>
           <div className="flex items-center justify-between">
-            <p className="text-gray-600">
+            <p className="text-gray-600 hidden sm:block">
               Welcome, {user.firstName || user.emailAddresses[0]?.emailAddress}!
             </p>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500">Your tier:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTierBadgeColor(userTier)}`}>
+              <span className="text-sm text-gray-500 hidden sm:inline">Your tier:</span>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTierBadgeColor(userTier)}`}
+                title={`Your tier: ${userTier.charAt(0).toUpperCase() + userTier.slice(1)}`}
+              >
                 {userTier.charAt(0).toUpperCase() + userTier.slice(1)}
               </span>
-              <TierUpgradeButton currentTier={userTier} onUpgrade={handleTierUpgrade} />
+              <span className="hidden sm:inline">
+                <TierUpgradeButton currentTier={userTier} onUpgrade={handleTierUpgrade} />
+              </span>
             </div>
           </div>
         </div>
